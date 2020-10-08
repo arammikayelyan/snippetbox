@@ -1,11 +1,11 @@
 package main
 
 import (
-	"net/url"
 	"path/filepath"
 	"text/template"
 	"time"
 
+	"github.com/arammikayelyan/snippetbox/pkg/forms"
 	"github.com/arammikayelyan/snippetbox/pkg/models"
 )
 
@@ -13,8 +13,7 @@ import (
 // any dynamic data that is passing to html template
 type templateData struct {
 	CurrentYear int
-	FormData    url.Values
-	FormErrors  map[string]string
+	Form        *forms.Form
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 }
