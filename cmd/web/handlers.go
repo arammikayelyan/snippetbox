@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -37,29 +36,11 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Instance of templateData holding snippet data.
-	data := &templateData{Snippet: s}
+	// Pass the flash message to the template.
+	app.render(w, r, "show.page.tmpl", &templateData{
+		Snippet: s,
+	})
 
-	// Initialize a slice containing the paths to the show.page.tmpl file,
-	// plus the base layout and footer.
-	files := []string{
-		"./ui/html/show.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	// Parse the template files
-	ts, err := template.ParseFiles(files...)
-
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-	}
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
@@ -71,9 +52,7 @@ func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	// First we call r.ParseForm() which adds any data in POST request bodies
-	// to the r.PostForm map. This also works in the same way for PUT and PATCH
-	// requests. If there are any errors, we use our app.ClientError helper to
-	// a 400 Bad Request response to the user.
+	// to the r.PostForm map.
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
@@ -102,6 +81,11 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
+	// Use the Put() method to add a string value and the corresponding key
+	// to the session data.
+	app.session.Put(r, "flash", "Snippet successfully created!")
+
 	// Redirect the user to the relevant page for the snippet.
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
