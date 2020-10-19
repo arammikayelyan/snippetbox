@@ -6,12 +6,36 @@ import (
 )
 
 func TestHumanDate(t *testing.T) {
-	tm := time.Date(2020, 12, 17, 10, 0, 0, 0, time.UTC)
-	hd := humanDate(tm)
 
-	// Check that output from the humanDate is in the format
-	// we expect.
-	if hd != "17 Dec 2020 at 10:00" {
-		t.Errorf("want %q; got %q", "17 Dec 2020 at 10:00", hd)
+	tests := []struct {
+		name string
+		tm   time.Time
+		want string
+	}{
+		{
+			name: "UTC",
+			tm:   time.Date(2020, 12, 17, 10, 0, 0, 0, time.UTC),
+			want: "17 Dec 2020 at 10:00",
+		},
+		{
+			name: "Empty",
+			tm:   time.Time{},
+			want: "",
+		},
+		{
+			name: "CET",
+			tm:   time.Date(2020, 12, 17, 10, 0, 0, 0, time.FixedZone("CET", 1*13*7)),
+			want: "17 Dec 2020 at 10:00",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			hd := humanDate(tt.tm)
+
+			if hd != tt.want {
+				t.Errorf("want %q; got %q", tt.want, hd)
+			}
+		})
 	}
 }
