@@ -12,7 +12,7 @@ import (
 // templateData type is a holding structure for
 // any dynamic data that is passing to html template
 type templateData struct {
-	AuthenticatedUser int
+	AuthenticatedUser *models.User
 	CurrentYear       int
 	Flash             string
 	Form              *forms.Form

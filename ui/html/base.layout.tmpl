@@ -28,7 +28,7 @@
         <div>
           {{if .AuthenticatedUser}}
             <form action='/user/logout' method='POST'>
-              <button>Logout</button>
+              <button>Logout {{.AuthenticatedUser.Name}}</button>
             </form>
           {{else}}
             <a href='/user/signup'>Signup</a>
@@ -47,7 +47,7 @@
 
       {{template "footer" .}}
 
-      <script src="/static/js/main.js" type="text/js"></script>
+      <script src="/static/js/main.js" type="text/javascript"></script>
     </body>
 
   </html>

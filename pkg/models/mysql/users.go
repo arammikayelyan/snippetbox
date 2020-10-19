@@ -74,7 +74,18 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 
 // Get returns a specific user based on id.
 func (m *UserModel) Get(id int) (*models.User, error) {
-	return nil, nil
+	s := &models.User{}
+
+	stmt := `SELECT id, name, email, created FROM users WHERE id = ?`
+	err := m.DB.QueryRow(stmt, id).Scan(&s.ID, &s.Name, &s.Email, &s.Created)
+	if err == sql.ErrNoRows {
+		return nil, models.ErrNoRecord
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }
 
 // This will return the 10 most recently created snippets.

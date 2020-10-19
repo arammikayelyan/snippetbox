@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"runtime/debug"
 	"time"
+
+	"github.com/arammikayelyan/snippetbox/pkg/models"
 )
 
-// The serverError helper writes an error message and stack trace to the
+// serverError helper writes an error message and stack trace to the
 // errorLog, then sends a generic 500 Internal Server Error response to
 // the user.
 func (app *application) serverError(w http.ResponseWriter, err error) {
@@ -45,8 +47,8 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 
 	td.AuthenticatedUser = app.authenticatedUser(r)
 	td.CurrentYear = time.Now().Year()
-	// Add the flash message to the templateData, if one exists.
 	td.Flash = app.session.PopString(r, "flash")
+
 	return td
 }
 
@@ -74,8 +76,11 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	buf.WriteTo(w)
 }
 
-// authenticatedUser returns the ID of the user from the session,
-// or zero if the request is from the an unauthenticated user.
-func (app *application) authenticatedUser(r *http.Request) int {
-	return app.session.GetInt(r, "userID")
+// authenticatedUser retreives the user details from the request context
+func (app *application) authenticatedUser(r *http.Request) *models.User {
+	user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	return user
 }

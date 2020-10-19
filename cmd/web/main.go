@@ -14,8 +14,11 @@ import (
 	"github.com/golangcollege/sessions"
 )
 
-// Define an application struct to hold the application-wide
-// dependencies.
+type contextKey string
+
+var contextKeyUser = contextKey("user")
+
+// application struct holds the application-wide dependencies.
 type application struct {
 	errorLog      *log.Logger
 	infoLog       *log.Logger
